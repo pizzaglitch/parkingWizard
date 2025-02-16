@@ -283,22 +283,3 @@ Assume that user wants to park right now, and the current time is within the tic
 /*
 change "Welcome" on wordpress to NY / LA, if google want to grab it anyway, it can, it'll just grab that info instead of the incorrect Welcome info.
 */
-
-/* Gmaps, dont wanna use, not free
-async function grabMapAddress(e) {
-  let latlng = e.latlng;
-  console.log(latlng.lat);
-  let grabbedAddressURL = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng.lat + "," + latlng.lng + "&key=AIzaSyBLCYynDF1cJ4lShsYX9nGmQVPap-8Bqp0";
-  try {
-      const grabbedResponse = await fetch(grabbedAddressURL);
-      if (!grabbedResponse.ok) {
-      throw new Error(`Response status: ${grabbedResponse.status}`);
-      }
-      const grabbedAddressJSON = await grabbedResponse.json();
-      console.log(grabbedAddressJSON);
-
-  } catch (error) {
-      console.error(error.message);
-  }
-}
-*/
