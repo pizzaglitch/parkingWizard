@@ -13,7 +13,7 @@
     crossorigin=""></script>
 </head>
 
-<body style="display: flex; justify-content: center; align-items: center; flex-direction: column;">
+<body style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 2vh">
     <form id="form">
         <input id="houseNumber" type="text" placeholder="house number">
         <input id="street" type="text" placeholder="street">
@@ -21,37 +21,11 @@
     </form>
     
     <div id="map" style="height: 50vh; width: 80vh;"></div>
-    <div id="chartDiv" style="height: 40vh; width: 80vh;">
+    <div id="chartDiv" style="height: 35vh; width: 75vh; display: flex; justify-content: center;">
         <canvas id="myChart"></canvas>
+        <canvas id="timeChart"></canvas>
     </div>
-    <script>
-        /*
-        const map = L.map('map').setView([40.694857277000914, -73.94557962772903], 13);
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        map.on('click', grabMapAddress)
-        
-        async function grabMapAddress(e) {
-            let latlng = e.latlng;
-            console.log(latlng.lat);
-            let grabbedAddressURL = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + latlng.lat + "&lon=" + latlng.lng;
-
-            try {
-                const grabbedResponse = await fetch(grabbedAddressURL);
-                if (!grabbedResponse.ok) {
-                throw new Error(`Response status: ${grabbedResponse.status}`);
-                }
-                const grabbedAddressJSON = await grabbedResponse.json();
-                console.log(grabbedAddressJSON);
-
-            } catch (error) {
-                console.error(error.message);
-            }
-        }
-        map.on('click', grabMapAddress)
-        */
-    </script>
+    <div id="timeChartDiv">
+    </div>
 </body>
 </html>
