@@ -255,7 +255,7 @@ function sortTimes(violationTimeIntervals, sortedTimes) {
       let tempTime = violationTimeIntervals[i];
       let tempIndexFloor = Math.floor(tempTime / 5);
       let tempIndexReg = tempTime / 5;
-
+      
       if (tempTime % 5 == 0 && sortedTimes[tempIndexReg] == null) {
         sortedTimes[tempIndexReg] = [tempTime];
       }
