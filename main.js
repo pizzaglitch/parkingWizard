@@ -202,7 +202,8 @@ function generateTimeChart(sortedTimes) {
           }]
       }
     }
-  )
+  ),
+  showChartToggle();
 }
 
 //Parsetime function. Changes violationTime and violationStartTime to Date objects so that I can find the time difference between the two
@@ -277,9 +278,15 @@ function resetMenu(sortedTimes) {
   streetCode3 = '';
 }
 
+//Display clicked address 
 function displayAddress(grabbedHouseNumber, grabbedStreetName) {
   const addressDiv = document.getElementById('address');
   addressDiv.innerHTML = grabbedHouseNumber + ' ' + grabbedStreetName;
+}
+
+//Display tabs for hourly chart
+function showChartToggle() {
+  document.getElementById('chartToggle').style.display = "block";
 }
 /*
 Add tooltip to leaflet

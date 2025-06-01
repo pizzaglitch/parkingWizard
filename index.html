@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="bundle.js" defer></script>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
     crossorigin=""/>
@@ -13,20 +14,22 @@
     crossorigin=""></script>
 </head>
 
-<body style="display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 2vh">
+<body>
     <form id="form">
         <input id="houseNumber" type="text" placeholder="house number">
         <input id="street" type="text" placeholder="street">
         <button type="submit">submit</button>
     </form>
     
-    <div id="map" style="height: 50vh; width: 80vh;"></div>
+    <div id="map"></div>
     <div id="address"></div>
-    <div id="chartDiv" style="height: 35vh; width: 75vh; display: flex; justify-content: center;">
+    <div id="chartDiv">
         <canvas id="myChart"></canvas>
         <canvas id="timeChart"></canvas>
     </div>
-    <div id="timeChartDiv">
+    <div id="chartToggle">
+        <button id="interval" type="button">Overall (Interval)</button>
+        <button id="cumulative" type="button">Overall (Cumulative)</button>
     </div>
 </body>
 </html>
