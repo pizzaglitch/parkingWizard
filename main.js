@@ -202,7 +202,7 @@ function generateTimeChart(sortedTimes) {
       data: {
         labels: fillTimeAxis(),
         datasets: [{
-            label: 'Ticket Distribution within ASP Time Window (All Days)',
+            label: 'Ticket Distribution within ASP Time Window (Interval)',
             data: ticketsByInterval,
           }]
       }
@@ -301,14 +301,17 @@ function displayAddress(grabbedHouseNumber, grabbedStreetName) {
 //Display tabs for hourly chart and update the chart onclick
 function showChartToggle(sortedTimes, cumulativeTimes) {
   let chart = Chart.getChart('timeChart');
-  document.getElementById('chartToggle').style.display = "block";
+  document.getElementById('chartToggle').style.display = "flex";
   document.getElementById('cumulative').onclick = function() {
     chart.data.datasets[0].data = cumulativeTimes
+    chart.data.datasets[0].label = 'Ticket Distribution within ASP Time Window (Cumulative)';
     chart.update();  
   };
   document.getElementById('interval').onclick = function() {
     const ticketsByInterval = Object.values(sortedTimes).map(x => x.length);
     chart.data.datasets[0].data = ticketsByInterval;
+    chart.data.datasets[0].label = 'Ticket Distribution within ASP Time Window (Interval)';
+
     chart.update();
   }; 
 }
