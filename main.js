@@ -75,9 +75,10 @@ async function getData(streetCode1, streetCode2, streetCode3) {
   let cumulativeTimes = new Array(19).fill(null);
 
   let violationTimeIntervals = [];
-
+  let tempTime = '';
   violationStartTime = 0;
   violationEndTime = 0;
+  
   //searches streetcode 1 & 2, violations for no parking ASP, no time restriction
   const url = "https://data.cityofnewyork.us/resource/pvqr-7yc4.json?$query=SELECT%0A%20%20%60summons_number%60%2C%0A%20%20%60plate_id%60%2C%0A%20%20%60registration_state%60%2C%0A%20%20%60plate_type%60%2C%0A%20%20%60issue_date%60%2C%0A%20%20%60violation_code%60%2C%0A%20%20%60vehicle_body_type%60%2C%0A%20%20%60vehicle_make%60%2C%0A%20%20%60issuing_agency%60%2C%0A%20%20%60street_code1%60%2C%0A%20%20%60street_code2%60%2C%0A%20%20%60street_code3%60%2C%0A%20%20%60vehicle_expiration_date%60%2C%0A%20%20%60violation_location%60%2C%0A%20%20%60violation_precinct%60%2C%0A%20%20%60issuer_precinct%60%2C%0A%20%20%60issuer_code%60%2C%0A%20%20%60issuer_command%60%2C%0A%20%20%60issuer_squad%60%2C%0A%20%20%60violation_time%60%2C%0A%20%20%60time_first_observed%60%2C%0A%20%20%60violation_county%60%2C%0A%20%20%60violation_in_front_of_or_opposite%60%2C%0A%20%20%60house_number%60%2C%0A%20%20%60street_name%60%2C%0A%20%20%60intersecting_street%60%2C%0A%20%20%60date_first_observed%60%2C%0A%20%20%60law_section%60%2C%0A%20%20%60sub_division%60%2C%0A%20%20%60violation_legal_code%60%2C%0A%20%20%60days_parking_in_effect%60%2C%0A%20%20%60from_hours_in_effect%60%2C%0A%20%20%60to_hours_in_effect%60%2C%0A%20%20%60vehicle_color%60%2C%0A%20%20%60unregistered_vehicle%60%2C%0A%20%20%60vehicle_year%60%2C%0A%20%20%60meter_number%60%2C%0A%20%20%60feet_from_curb%60%2C%0A%20%20%60violation_post_code%60%2C%0A%20%20%60violation_description%60%2C%0A%20%20%60no_standing_or_stopping_violation%60%2C%0A%20%20%60hydrant_violation%60%2C%0A%20%20%60double_parking_violation%60%0AWHERE%0A%20%20caseless_eq(%60violation_description%60%2C%20%22No%20parking%20street%20cleaning%22)%0A%20%20AND%20((%60street_code1%60%20IN%20(%22" + streetCode1 + "%22))%0A%20%20%20%20%20%20%20%20%20AND%20((%60street_code2%60%20IN%20(%22" + streetCode2 + "%22))%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20))";
   try {
@@ -88,7 +89,7 @@ async function getData(streetCode1, streetCode2, streetCode3) {
     }
     const nearbyTickets = await response.json();  
     console.log(nearbyTickets);
-  
+
     //counts number of tickets in area on the same day, stores each ticket's violation time in ticketsOnSameDay object
     nearbyTickets.forEach(element => {
       let parkingDate = new Date(element.issue_date);
@@ -99,7 +100,6 @@ async function getData(streetCode1, streetCode2, streetCode3) {
         violationEndTime = element.to_hours_in_effect;
         violationStartTimeNum = Number(violationStartTime.slice(0,4)); 
         violationEndTimeNum = Number(violationEndTime.slice(0,4));
-        console.log(violationStartTimeNum, violationEndTimeNum);
       } 
   
       if (currentDay == parkingDay) {
@@ -127,9 +127,9 @@ async function getData(streetCode1, streetCode2, streetCode3) {
     sortTimes(violationTimeIntervals, sortedTimes, cumulativeTimes);
     console.log("cumulative times:", cumulativeTimes);
     console.log("sorted time: ", sortedTimes);
-
     generateTimeChart(sortedTimes);
     showChartToggle(sortedTimes, cumulativeTimes);
+    displayAddressTicketInfo(cumulativeTimes);
     resetMenu(sortedTimes);
   } catch (error) {
     console.error(error.message);
@@ -274,6 +274,7 @@ function fillTimeAxis(){
     testTimes.push(date2);
     date.setMinutes(date.getMinutes() + interval);
   }
+  displayTicketTimes(testTimes);
   return testTimes;
 }
 
@@ -297,7 +298,17 @@ function displayAddress(grabbedHouseNumber, grabbedStreetName) {
   addressDiv.innerHTML = grabbedHouseNumber + ' ' + grabbedStreetName;
 }
 
+function displayAddressTicketInfo(cumulativeTimes) {
+  const addressTickets = document.getElementById('addressTickets');
+  addressTickets.innerHTML = 'Total Tickets on this block: ' + cumulativeTimes[18].toString();
+}
 
+function displayTicketTimes(testTimes) {
+  const violationTimes = document.getElementById('violationTimes');
+  let startTime = testTimes[0];
+  let endTime = testTimes[18];
+  violationTimes.innerHTML = 'Alternate Side Parking (ASP) occurs on this block between ' + startTime +  ' - ' + endTime;
+}
 //Display tabs for hourly chart and update the chart onclick
 function showChartToggle(sortedTimes, cumulativeTimes) {
   let chart = Chart.getChart('timeChart');
