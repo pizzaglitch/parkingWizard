@@ -72,6 +72,8 @@ async function getData(streetCode1, streetCode2, streetCode3) {
   let urlDate = new Date();
   let urlPrevYear = urlDate.setFullYear(urlDate.getFullYear()-1);
   let sortedTimes = new Array(19).fill(null);
+  let cumulativeTimes = new Array(19).fill(null);
+
   let violationTimeIntervals = [];
 
   violationStartTime = 0;
@@ -122,9 +124,12 @@ async function getData(streetCode1, streetCode2, streetCode3) {
     console.log(ticketTimes);
 
     generateChart();
-    sortTimes(violationTimeIntervals, sortedTimes);
+    sortTimes(violationTimeIntervals, sortedTimes, cumulativeTimes);
+    console.log("cumulative times:", cumulativeTimes);
+    console.log("sorted time: ", sortedTimes);
+
     generateTimeChart(sortedTimes);
-    console.log(sortedTimes);
+    showChartToggle(sortedTimes, cumulativeTimes);
     resetMenu(sortedTimes);
   } catch (error) {
     console.error(error.message);
@@ -137,7 +142,7 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 map.on('click', grabMapAddress)
-map.on('click',)
+
 //Grab map address on click
 async function grabMapAddress(e) {
   let latlng = e.latlng;
@@ -202,9 +207,8 @@ function generateTimeChart(sortedTimes) {
           }]
       }
     }
-  ),
-  showChartToggle();
-}
+  )
+};
 
 //Parsetime function. Changes violationTime and violationStartTime to Date objects so that I can find the time difference between the two
 function parseTime(t) {
@@ -217,7 +221,8 @@ function parseTime(t) {
   return new Date(`2000-01-01 ${hour}:${min}`);
 }
 
-function sortTimes(violationTimeIntervals, sortedTimes) {   
+function sortTimes(violationTimeIntervals, sortedTimes, cumulativeTimes) {   
+  //Interval Times
     for (let i = 0; i < violationTimeIntervals.length; i++) {
       let tempTime = violationTimeIntervals[i];
       let tempIndexFloor = Math.floor(tempTime / 5);
@@ -238,11 +243,19 @@ function sortTimes(violationTimeIntervals, sortedTimes) {
         sortedTimes[tempIndexFloor].splice(0, 0, tempTime);
       }
     }
-
-    //Hackjob attempt at just making null indexes into empty arrays. Goal is to have their length be zero, so that I can put that in generateTimeChart
+    // Convert null indices to empty arrays, fill in cumulative array 
+    let cumulativeCounter = 0;
     for (let i = 0; i < sortedTimes.length; i++) {
       if (sortedTimes[i] == null) {
         sortedTimes[i] = [];
+        cumulativeTimes[i] += 0;
+      }
+      if (sortedTimes[i].length == 0) {
+        cumulativeTimes[i] = cumulativeCounter;
+      }
+      else {
+        cumulativeCounter += sortedTimes[i].length
+        cumulativeTimes[i] += cumulativeCounter;
       }
     }
 }
@@ -284,10 +297,25 @@ function displayAddress(grabbedHouseNumber, grabbedStreetName) {
   addressDiv.innerHTML = grabbedHouseNumber + ' ' + grabbedStreetName;
 }
 
-//Display tabs for hourly chart
-function showChartToggle() {
+
+//Display tabs for hourly chart and update the chart onclick
+function showChartToggle(sortedTimes, cumulativeTimes) {
+  let chart = Chart.getChart('timeChart');
   document.getElementById('chartToggle').style.display = "block";
+  document.getElementById('cumulative').onclick = function() {
+    chart.data.datasets[0].data = cumulativeTimes
+    chart.update();  
+  };
+  document.getElementById('interval').onclick = function() {
+    const ticketsByInterval = Object.values(sortedTimes).map(x => x.length);
+    chart.data.datasets[0].data = ticketsByInterval;
+    chart.update();
+  }; 
 }
+
+
+
+
 /*
 Add tooltip to leaflet
 Display Total tickets
